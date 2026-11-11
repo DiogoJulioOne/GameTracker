@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="fundo">#FF0D0B15</color>
+    <color name="fundo_cartao">#FF241E30</color>
+    <color name="superficie">#FF201B2A</color>
+    <color name="borda">#FF403649</color>
+    <color name="destaque">#FFC491F8</color>
+    <color name="destaque_escuro">#FF8C58CA</color>
+    <color name="botao_lilas">#FFC18BF7</color>
+    <color name="botao_lilas_text">#FF000000</color>
+    <color name="ripple_light">#33FFFFFF</color>
+    <color name="ripple_dark">#25000000</color>
+    <color name="acao_excluir">#FFDE6685</color>
+    <color name="acao_excluir_fundo">#FFC18BF7</color>
+    <color name="acao_excluir_escuro">#FFB85A78</color>
+    <color name="status_fundo">#FF362843</color>
+    <color name="texto">#FFF8F1FC</color>
+    <color name="texto_secundario">#FFC1B1CC</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="botao_lilas_ativo">#FFD9A7FF</color>
+    <color name="botao_secundario_fundo">#FFB58AE9</color>
+    <color name="nav_roxo_inativo">#FF1B1724</color>
+    <color name="nav_texto_inativo">#FFF0DFF7</color>
+    <color name="nav_fundo">#FF17121F</color>
+    <color name="dourado_podio">#FFFFD36A</color>
+</resources>

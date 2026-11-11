@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/bg_tela_gametracker" android:fillViewport="true">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="28dp">
+
+        <ImageButton android:id="@+id/btnVoltar" android:layout_width="40dp" android:layout_height="40dp" android:layout_marginBottom="16dp" android:background="?attr/selectableItemBackground" android:contentDescription="@string/voltar" android:scaleType="centerInside" android:src="@drawable/ic_voltar" />
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:gravity="center_vertical" android:orientation="vertical">
+
+            <com.example.gametracker.utils.MarcaGameTrackerView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/marca_app" android:textColor="@color/destaque" android:textSize="34sp" android:textStyle="bold" android:fontFamily="sans-serif-black" android:letterSpacing="-0.035" />
+
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="@string/titulo_cadastro" android:textColor="@color/texto" android:textSize="28sp" android:textStyle="bold" android:fontFamily="sans-serif-medium" />
+
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:layout_marginBottom="28dp" android:text="@string/subtitulo_cadastro" android:textColor="@color/texto_secundario" android:textSize="15sp" />
+
+            <EditText android:id="@+id/editNomeUsuario" style="@style/CampoTexto" android:hint="@string/nome" android:inputType="textPersonName" android:autofillHints="name" />
+
+            <EditText android:id="@+id/editEmail" style="@style/CampoTexto" android:layout_marginTop="12dp" android:hint="@string/email" android:inputType="textEmailAddress" android:autofillHints="emailAddress" />
+
+            <EditText android:id="@+id/editSenha" style="@style/CampoTexto" android:layout_marginTop="12dp" android:hint="@string/senha" android:inputType="textPassword" android:autofillHints="newPassword" />
+
+            <EditText android:id="@+id/editConfirmarSenha" style="@style/CampoTexto" android:layout_marginTop="12dp" android:hint="@string/confirmar_senha" android:inputType="textPassword" android:autofillHints="newPassword" />
+
+            <Button android:textColor="@color/black" android:id="@+id/buttonCadastrar" style="@style/BotaoPrincipal" android:layout_marginTop="24dp" android:text="@string/cadastrar" android:textAllCaps="false" android:fontFamily="sans-serif-medium" />
+
+            <Button android:textColor="@color/black" android:id="@+id/textJaTemConta" style="@style/BotaoPrincipal" android:layout_marginTop="20dp" android:text="@string/ja_tem_conta_entrar" android:textAllCaps="false" android:fontFamily="sans-serif-medium" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

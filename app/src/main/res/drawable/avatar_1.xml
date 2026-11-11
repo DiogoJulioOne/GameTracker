@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- circular background -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#FF8A80" />
+        </shape>
+    </item>
+    <!-- simple controller body -->
+    <item android:top="30dp" android:left="12dp" android:right="12dp" android:bottom="12dp">
+        <shape>
+            <corners android:radius="6dp" />
+            <solid android:color="#222222" />
+            <size android:height="18dp" />
+        </shape>
+    </item>
+    <!-- left button -->
+    <item android:top="44dp" android:left="28dp">
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF" />
+            <size android:width="8dp" android:height="8dp" />
+        </shape>
+    </item>
+    <!-- right button -->
+    <item android:top="44dp" android:right="28dp">
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF" />
+            <size android:width="8dp" android:height="8dp" />
+        </shape>
+    </item>
+</layer-list>

@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/bg_tela_gametracker" android:fillViewport="true">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center_vertical" android:orientation="vertical" android:padding="28dp">
+
+        <com.example.gametracker.utils.MarcaGameTrackerView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/marca_app" android:textColor="@color/destaque" android:textSize="34sp" android:textStyle="bold" android:fontFamily="sans-serif-black" android:letterSpacing="-0.035" />
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="@string/titulo_login" android:textColor="@color/texto" android:textSize="28sp" android:textStyle="bold" android:fontFamily="sans-serif-medium" />
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:layout_marginBottom="28dp" android:text="@string/subtitulo_login" android:textColor="@color/texto_secundario" android:textSize="15sp" />
+
+        <EditText android:id="@+id/editNomeUsuario" style="@style/CampoTexto" android:hint="@string/email" android:inputType="textEmailAddress" android:autofillHints="emailAddress" />
+
+        <EditText android:id="@+id/editSenha" style="@style/CampoTexto" android:layout_marginTop="12dp" android:hint="@string/senha" android:inputType="textPassword" android:autofillHints="password" />
+
+        <TextView android:id="@+id/buttonEsqueciSenha" android:layout_width="match_parent" android:layout_height="48dp" android:gravity="center_vertical|end" android:text="Esqueci minha senha" android:textColor="@color/destaque" android:textSize="14sp" />
+
+        <Button android:textColor="@color/black" android:id="@+id/buttonEntrar" style="@style/BotaoPrincipal" android:layout_marginTop="24dp" android:text="@string/entrar" android:textAllCaps="false" android:fontFamily="sans-serif-medium" />
+
+        <Button android:textColor="@color/black" android:id="@+id/buttonIrCadastro" style="@style/BotaoPrincipal" android:layout_marginTop="12dp" android:text="@string/ir_para_cadastro" android:textAllCaps="false" android:fontFamily="sans-serif-medium" />
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/bg_tela_gametracker" android:fillViewport="true">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp">
+
+        <include layout="@layout/gt_brand_header" />
+        <ImageButton android:id="@+id/buttonVoltarJogo" android:layout_width="48dp"
+            android:layout_height="48dp" android:padding="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_gt_back" android:tint="@color/texto"
+            android:contentDescription="@string/voltar" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/adicionar_jogo" android:textColor="@color/texto" android:textSize="26sp" android:textStyle="bold" android:fontFamily="sans-serif-medium" />
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:layout_marginBottom="8dp" android:text="@string/nome_do_jogo" android:textColor="@color/texto_secundario" android:textSize="14sp" />
+
+        <AutoCompleteTextView android:id="@+id/editTituloJogo" style="@style/CampoTexto" android:hint="@string/exemplo_jogo" android:inputType="textCapSentences" />
+
+        <TextView android:id="@+id/textoDicaCatalogo" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Pesquise pelo nome para ver sugestões locais, ou digite qualquer jogo." android:textColor="@color/texto_secundario" android:textSize="12sp" />
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:layout_marginBottom="8dp" android:text="@string/plataforma" android:textColor="@color/texto_secundario" android:textSize="14sp" />
+
+        <EditText android:id="@+id/editPlataforma" style="@style/CampoTexto" android:hint="@string/exemplo_plataforma" android:inputType="textCapSentences" />
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:layout_marginBottom="8dp" android:text="@string/status" android:textColor="@color/texto_secundario" android:textSize="14sp" />
+
+        <TextView android:id="@+id/spinnerStatus" android:layout_width="match_parent"
+            android:layout_height="54dp" android:background="@drawable/bg_campo"
+            android:paddingHorizontal="14dp" android:gravity="center_vertical"
+            android:textColor="@color/texto" android:textSize="16sp"
+            android:text="Quero jogar"
+            android:drawableEnd="@drawable/ic_gt_chevron_down" android:drawableTint="@color/texto"
+            android:drawablePadding="12dp" android:clickable="true" android:focusable="true"
+            android:contentDescription="Selecionar status do jogo" />
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:layout_marginBottom="8dp" android:text="@string/data_inicio" android:textColor="@color/texto_secundario" android:textSize="14sp" />
+
+        <EditText android:id="@+id/editDataInicio" style="@style/CampoTexto" android:hint="@string/exemplo_data" android:inputType="date" />
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:layout_marginBottom="8dp" android:text="@string/horas_jogadas" android:textColor="@color/texto_secundario" android:textSize="14sp" />
+
+        <EditText android:id="@+id/editHorasJogadas" style="@style/CampoTexto" android:hint="@string/exemplo_horas" android:inputType="numberDecimal" android:digits="0123456789.," />
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:layout_marginBottom="8dp" android:text="@string/progresso" android:textColor="@color/texto_secundario" android:textSize="14sp" />
+
+        <EditText android:id="@+id/editProgresso" style="@style/CampoTexto" android:hint="@string/exemplo_progresso" android:inputType="number" android:digits="0123456789" />
+
+        <TextView android:id="@+id/textoBarraProgresso" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Ajuste rápido do progresso (opcional)" android:textColor="@color/texto_secundario" android:textSize="12sp" />
+        <SeekBar android:id="@+id/seekProgressoJogo" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="100" android:progress="0" android:progressTint="@color/destaque" android:thumbTint="@color/destaque" />
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:layout_marginBottom="8dp" android:text="@string/observacoes" android:textColor="@color/texto_secundario" android:textSize="14sp" />
+
+        <EditText android:id="@+id/editObservacoes" style="@style/CampoTexto" android:gravity="top|start" android:hint="@string/exemplo_observacoes" android:inputType="textCapSentences|textMultiLine" android:minHeight="110dp" android:padding="14dp" android:singleLine="false" />
+
+        <Button android:textColor="@color/black" android:id="@+id/buttonSalvarJogo" style="@style/BotaoPrincipal" android:layout_marginTop="28dp" android:text="@string/adicionar" android:textAllCaps="false" android:fontFamily="sans-serif-medium" />
+    </LinearLayout>
+</ScrollView>

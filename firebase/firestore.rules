@@ -1,0 +1,246 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function logado() { return request.auth != null; }
+    function dono(uid) { return logado() && request.auth.uid == uid; }
+    function curtiram(a, b) {
+      return getAfter(/databases/$(database)/documents/usuarios/$(a)/curtidas/$(b)).data.gostou == true
+        && getAfter(/databases/$(database)/documents/usuarios/$(b)/curtidas/$(a)).data.gostou == true;
+    }
+    function amigos(id) {
+      return logado()
+        && request.auth.uid in get(/databases/$(database)/documents/amizades/$(id)).data.participantes;
+    }
+    function temConvite(id) {
+      let conviteId = id + '_' + request.auth.uid;
+      return exists(/databases/$(database)/documents/convitesGrupos/$(conviteId));
+    }
+    function membroGrupo(id) {
+      return logado()
+        && request.auth.uid in get(/databases/$(database)/documents/grupos/$(id)).data.membros;
+    }
+
+    // Permissões no servidor: cargo visível na tela NÃO concede direitos sozinho.
+    function grupoDoc(id) {
+      return get(/databases/$(database)/documents/grupos/$(id)).data;
+    }
+    function donoGrupo(id) {
+      return logado() && grupoDoc(id).criadorId == request.auth.uid;
+    }
+    function cargoGrupo(id) {
+      return grupoDoc(id).get('cargos', {}).get(request.auth.uid, 'membro');
+    }
+    function padraoGrupo(acao) {
+      return acao == 'organizarPartidas' ? ['administrador', 'moderador', 'membro'] :
+        acao == 'excluirMensagens' ? ['administrador', 'moderador'] :
+        ['administrador'];
+    }
+    function podeGrupo(id, acao) {
+      return membroGrupo(id) && (donoGrupo(id) ||
+        cargoGrupo(id) in grupoDoc(id).get('permissoes', {}).get(acao, padraoGrupo(acao)));
+    }
+    function acessoCanal(id, canalId) {
+      let canais = get(/databases/$(database)/documents/grupos/$(id)/canais/$(canalId));
+      return membroGrupo(id) && (donoGrupo(id) ||
+        canais.data.cargosPermitidos.size() == 0 ||
+        cargoGrupo(id) in canais.data.cargosPermitidos);
+    }
+
+    match /usuarios/{uid} {
+      allow read: if dono(uid);
+      allow create, update: if dono(uid)
+        && request.resource.data.nicknameBusca is string
+        && request.resource.data.nicknameBusca.size() >= 3
+        && getAfter(/databases/$(database)/documents/nicknames/$(request.resource.data.nicknameBusca)).data.uid == uid;
+      allow delete: if dono(uid);
+
+      match /jogos/{jogoId} { allow read, write: if dono(uid); }
+      match /gruposSilenciados/{grupoId} {
+        allow read, delete: if dono(uid);
+        allow create, update: if dono(uid)
+          && request.resource.data.keys().hasOnly(['silenciado'])
+          && request.resource.data.silenciado is bool;
+      }
+      match /conversasLidas/{amizadeId} {
+        allow read: if dono(uid);
+        allow create, update: if dono(uid)
+          && request.resource.data.keys().hasOnly(['mensagemId'])
+          && request.resource.data.mensagemId is string;
+        allow delete: if dono(uid);
+      }
+      match /curtidas/{outroId} {
+        // A pessoa curtida pode consultar somente a curtida dirigida a ela.
+        allow get: if dono(uid) || (logado() && request.auth.uid == outroId);
+        allow list: if dono(uid);
+        allow create, update: if dono(uid) && outroId != uid
+          && request.resource.data.keys().hasOnly(['gostou','criadoEm'])
+          && request.resource.data.gostou is bool;
+        allow delete: if dono(uid);
+      }
+    }
+
+    match /nicknames/{nickname} {
+      allow get: if logado() && (resource == null ||
+        !resource.data.keys().hasAny(['email']) || resource.data.uid == request.auth.uid);
+      allow list: if false;
+      allow create, update: if logado()
+        && request.resource.data.keys().hasOnly(['uid'])
+        && request.resource.data.uid == request.auth.uid
+        && (!exists(/databases/$(database)/documents/nicknames/$(nickname)) || resource.data.uid == request.auth.uid);
+      allow delete: if logado() && resource.data.uid == request.auth.uid;
+    }
+
+    match /perfisPublicos/{uid} {
+      allow read: if logado();
+      allow create, update: if dono(uid)
+        && request.resource.data.keys().hasOnly(['nome','nickname','bio','jogoFavorito','avatar','jogosPublicos'])
+        && request.resource.data.keys().hasAll(['nome','nickname','bio','jogoFavorito','avatar'])
+        && (!('jogosPublicos' in request.resource.data) || (request.resource.data.jogosPublicos is list && request.resource.data.jogosPublicos.size() <= 300))
+        && request.resource.data.nome is string
+        && request.resource.data.nickname is string
+        && request.resource.data.bio is string
+        && request.resource.data.bio.size() <= 500
+        && request.resource.data.jogoFavorito is string;
+      allow delete: if dono(uid);
+    }
+
+    match /amizades/{id} {
+      allow read: if logado() && request.auth.uid in resource.data.participantes;
+      allow create: if logado()
+        && request.resource.data.keys().hasOnly(['participantes','criadoEm'])
+        && request.resource.data.participantes is list
+        && request.resource.data.participantes.size() == 2
+        && request.auth.uid in request.resource.data.participantes
+        && request.resource.data.participantes[0] != request.resource.data.participantes[1]
+        && (id == request.resource.data.participantes[0] + '_' + request.resource.data.participantes[1]
+          || id == request.resource.data.participantes[1] + '_' + request.resource.data.participantes[0])
+        && curtiram(request.resource.data.participantes[0], request.resource.data.participantes[1]);
+      allow update, delete: if false;
+      match /mensagens/{mensagemId} {
+        allow read: if amigos(id);
+        allow create: if amigos(id)
+          && request.resource.data.keys().hasOnly(['autorId','texto','criadoEm'])
+          && request.resource.data.autorId == request.auth.uid
+          && request.resource.data.texto is string
+          && request.resource.data.texto.size() > 0
+          && request.resource.data.texto.size() <= 1000;
+        allow update, delete: if false;
+      }
+    }
+
+    match /convitesGrupos/{id} {
+      allow read: if logado() && (resource.data.convidadoId == request.auth.uid
+        || resource.data.remetenteId == request.auth.uid);
+      allow create: if logado()
+        && request.resource.data.keys().hasOnly(['grupoId','nomeGrupo','convidadoId','remetenteId','criadoEm'])
+        && request.resource.data.remetenteId == request.auth.uid
+        && id == request.resource.data.grupoId + '_' + request.resource.data.convidadoId
+        && podeGrupo(request.resource.data.grupoId, "convidar");
+      allow update: if false;
+      allow delete: if logado() && (
+        resource.data.convidadoId == request.auth.uid || resource.data.remetenteId == request.auth.uid);
+    }
+
+    match /grupos/{id} {
+      allow read: if logado() && (resource.data.publico == true || request.auth.uid in resource.data.membros);
+      allow create: if logado() && request.resource.data.criadorId == request.auth.uid
+        && request.resource.data.membros == [request.auth.uid]
+        && request.resource.data.nome is string
+        && request.resource.data.nome.size() >= 3 && request.resource.data.nome.size() <= 50
+        && request.resource.data.cargos is map
+        && request.resource.data.cargos[request.auth.uid] == 'dono'
+        && request.resource.data.permissoes is map;
+      allow update: if logado() && (
+        // Proprietário sempre precisa continuar proprietário.
+        (resource.data.criadorId == request.auth.uid
+          && request.resource.data.criadorId == resource.data.criadorId
+          && request.auth.uid in request.resource.data.membros
+          && request.resource.data.get('cargos', {}).get(request.auth.uid, 'dono') == 'dono')
+        // Entrada individual em grupos públicos ou por convite.
+        || ((resource.data.publico == true || temConvite(id))
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['membros'])
+          && !(request.auth.uid in resource.data.membros)
+          && request.resource.data.membros.size() == resource.data.membros.size() + 1
+          && request.resource.data.membros.hasAll(resource.data.membros)
+          && request.auth.uid in request.resource.data.membros)
+        // Sair do grupo sem poder expulsar outra pessoa.
+        || (request.auth.uid != resource.data.criadorId
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['membros'])
+          && request.auth.uid in resource.data.membros
+          && !(request.auth.uid in request.resource.data.membros)
+          && resource.data.membros.size() == request.resource.data.membros.size() + 1
+          && request.resource.data.membros.hasAll(resource.data.membros))
+        // Remoção por alguém autorizado (preserva o dono).
+        || (podeGrupo(id, 'removerMembros')
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['membros'])
+          && request.resource.data.membros.size() == resource.data.membros.size() - 1
+          && resource.data.membros.hasAll(request.resource.data.membros)
+          && resource.data.criadorId in request.resource.data.membros)
+      );
+      allow delete: if donoGrupo(id);
+
+      // Chat geral legado, preservado para grupos existentes.
+      match /mensagens/{mensagemId} {
+        allow read: if membroGrupo(id);
+        allow create: if membroGrupo(id)
+          && request.resource.data.keys().hasOnly(['autorId','texto','criadoEm'])
+          && request.resource.data.autorId == request.auth.uid
+          && request.resource.data.texto is string
+          && request.resource.data.texto.size() > 0
+          && request.resource.data.texto.size() <= 1000;
+        allow delete: if membroGrupo(id) && (
+          resource.data.autorId == request.auth.uid || podeGrupo(id, 'excluirMensagens'));
+        allow update: if false;
+      }
+      match /canais/{canalId} {
+        // Metadados dos canais são visíveis aos membros; conteúdo restrito no chat.
+        allow read: if membroGrupo(id);
+        allow create: if podeGrupo(id, 'criarCanais')
+          && request.resource.data.keys().hasOnly(['nome','descricao','cargosPermitidos','criadorId','criadoEm'])
+          && request.resource.data.criadorId == request.auth.uid
+          && request.resource.data.nome is string
+          && request.resource.data.nome.size() >= 3 && request.resource.data.nome.size() <= 35
+          && request.resource.data.descricao is string
+          && request.resource.data.cargosPermitidos is list
+          && request.resource.data.cargosPermitidos.size() <= 3
+          && request.resource.data.cargosPermitidos.hasOnly(['administrador','moderador','membro']);
+        allow update: if podeGrupo(id, 'gerenciarCanais')
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nome','cargosPermitidos'])
+          && request.resource.data.nome is string
+          && request.resource.data.nome.size() >= 3 && request.resource.data.nome.size() <= 35
+          && request.resource.data.cargosPermitidos is list
+          && request.resource.data.cargosPermitidos.size() <= 3
+          && request.resource.data.cargosPermitidos.hasOnly(['administrador','moderador','membro']);
+        allow delete: if podeGrupo(id, 'gerenciarCanais');
+        match /mensagens/{mensagemId} {
+          allow read: if acessoCanal(id, canalId);
+          allow create: if acessoCanal(id, canalId)
+            && request.resource.data.keys().hasOnly(['autorId','texto','criadoEm'])
+            && request.resource.data.autorId == request.auth.uid
+            && request.resource.data.texto is string
+            && request.resource.data.texto.size() > 0
+            && request.resource.data.texto.size() <= 1000;
+          allow delete: if acessoCanal(id, canalId) && (
+            resource.data.autorId == request.auth.uid || podeGrupo(id, 'excluirMensagens'));
+          allow update: if false;
+        }
+      }
+      match /partidas/{partidaId} {
+        allow read: if membroGrupo(id);
+        allow create: if podeGrupo(id, 'organizarPartidas')
+          && request.resource.data.organizadorId == request.auth.uid
+          && request.resource.data.confirmados == [request.auth.uid]
+          && request.resource.data.vagas is int
+          && request.resource.data.vagas >= 1 && request.resource.data.vagas <= 30;
+        allow update: if membroGrupo(id)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['confirmados'])
+          && request.resource.data.confirmados.size() == resource.data.confirmados.size() + 1
+          && request.resource.data.confirmados.size() <= resource.data.vagas
+          && request.resource.data.confirmados.hasAll(resource.data.confirmados)
+          && !(request.auth.uid in resource.data.confirmados)
+          && request.auth.uid in request.resource.data.confirmados;
+        allow delete: if donoGrupo(id) || (membroGrupo(id) && resource.data.organizadorId == request.auth.uid);
+      }
+    }
+  }
+}

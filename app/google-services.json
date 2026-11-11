@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "901800944085",
+    "project_id": "gametracker-a8424",
+    "storage_bucket": "gametracker-a8424.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:901800944085:android:451bdae1d7cf82e6ad9d5c",
+        "android_client_info": {
+          "package_name": "com.example.gametracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmS1EeoszuHA1TNPhu1LowrlUemuPjwus"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
+

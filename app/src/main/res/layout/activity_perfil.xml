@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='utf-8'?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/bg_tela_gametracker" android:orientation="vertical">
+
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:background="@drawable/bg_tela_gametracker" android:fillViewport="true">
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+
+            <include layout="@layout/gt_brand_header" />
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center" android:orientation="vertical" android:paddingTop="10dp" android:paddingBottom="6dp">
+
+                <ImageView android:id="@+id/imagemAvatarPerfil" android:layout_width="140dp" android:layout_height="140dp" android:background="@drawable/bg_circle" android:scaleType="centerCrop" android:clipToOutline="true" android:contentDescription="Avatar" android:src="@drawable/avatar_1" />
+
+                <TextView android:id="@+id/textoNomePerfil" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:gravity="center" android:textColor="@color/texto" android:textSize="26sp" android:textStyle="bold" android:fontFamily="sans-serif-medium" />
+
+                <TextView android:id="@+id/textoNicknamePerfil" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:gravity="center" android:textColor="@color/texto_secundario" android:textSize="14sp" />
+
+                <TextView android:id="@+id/textoBioPerfil" android:layout_width="280dp" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:gravity="center" android:textColor="@color/texto_secundario" android:textSize="13sp" />
+            </LinearLayout>
+
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Sobre" android:textColor="@color/destaque" android:textSize="14sp" android:textStyle="bold" />
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_card_jogo" android:orientation="vertical" android:padding="12dp" android:layout_marginTop="8dp">
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="E-mail" android:textColor="@color/texto_secundario" android:textSize="13sp" />
+
+                <TextView android:id="@+id/textoEmailPerfil" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textColor="@color/texto" android:textSize="15sp" />
+
+                <View android:layout_width="match_parent" android:layout_height="8dp" />
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Jogo favorito" android:textColor="@color/texto_secundario" android:textSize="13sp" />
+
+                <TextView android:id="@+id/textoJogoFavoritoPerfil" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textColor="@color/texto" android:textSize="15sp" />
+            </LinearLayout>
+
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="10dp" android:text="@string/perfil_minha_biblioteca" android:textColor="@color/destaque" android:textSize="14sp" android:textStyle="bold" />
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+
+                <include layout="@layout/item_estatistica_perfil" android:id="@+id/cardTotalJogos" android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" />
+
+                <include layout="@layout/item_estatistica_perfil" android:id="@+id/cardJogando" android:layout_width="0dp" android:layout_height="88dp" android:layout_marginStart="10dp" android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:orientation="horizontal">
+
+                <include layout="@layout/item_estatistica_perfil" android:id="@+id/cardPausados" android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" />
+
+                <include layout="@layout/item_estatistica_perfil" android:id="@+id/cardZerados" android:layout_width="0dp" android:layout_height="88dp" android:layout_marginStart="10dp" android:layout_weight="1" />
+            </LinearLayout>
+
+            <include layout="@layout/item_estatistica_perfil" android:id="@+id/cardQueroJogar" android:layout_width="match_parent" android:layout_height="76dp" android:layout_marginTop="10dp" />
+
+            <TextView android:id="@+id/textoPerfilVazio" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:background="@drawable/bg_card_jogo" android:gravity="center" android:padding="14dp" android:text="@string/perfil_biblioteca_vazia" android:textColor="@color/texto_secundario" android:visibility="gone" />
+
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="22dp" android:layout_marginBottom="10dp" android:text="@string/perfil_estatisticas" android:textColor="@color/destaque" android:textSize="14sp" android:textStyle="bold" />
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_card_jogo" android:orientation="vertical" android:padding="16dp">
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/perfil_total_horas" android:textColor="@color/texto_secundario" android:textSize="14sp" />
+
+                <TextView android:id="@+id/textoTotalHoras" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textColor="@color/texto" android:textSize="23sp" android:textStyle="bold" />
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="@string/perfil_mais_jogado" android:textColor="@color/texto_secundario" android:textSize="14sp" />
+
+                <TextView android:id="@+id/textoMaisJogado" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textColor="@color/texto" android:textSize="17sp" android:textStyle="bold" />
+
+                <TextView android:id="@+id/textoProgressoMedio" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:textColor="@color/texto_secundario" android:textSize="14sp" />
+
+                <ProgressBar android:id="@+id/progressBarProgressoMedio" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="10dp" android:layout_marginTop="7dp" android:max="100" android:progress="0" android:progressBackgroundTint="@color/borda" android:progressTint="@color/destaque" />
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="@string/perfil_jogos_concluidos" android:textColor="@color/texto_secundario" android:textSize="14sp" />
+
+                <TextView android:id="@+id/textoJogosConcluidos" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textColor="@color/texto" android:textSize="17sp" android:textStyle="bold" />
+            </LinearLayout>
+
+            <Button android:textColor="@color/black" android:id="@+id/buttonEditarPerfil" style="@style/BotaoPrincipal" android:layout_marginTop="18dp" android:text="@string/editar_perfil" android:textAllCaps="false" android:fontFamily="sans-serif-medium" />
+
+            <Switch android:id="@+id/switchEfeitoCards" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="Efeito de movimento nos cards" android:textColor="@color/texto" />
+
+            <Button android:textColor="@color/black" android:id="@+id/buttonSairPerfil" style="@style/BotaoPrincipal" android:layout_marginTop="10dp" android:layout_marginBottom="12dp" android:text="@string/sair_da_conta" android:textAllCaps="false" android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+    </ScrollView>
+
+    <include layout="@layout/bottom_navigation" />
+</LinearLayout>
