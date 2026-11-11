@@ -55,6 +55,35 @@ service cloud.firestore {
       allow delete: if dono(uid);
 
       match /jogos/{jogoId} { allow read, write: if dono(uid); }
+
+      // Ranking da atividade: cada pontuação tem um ID único.
+      // Apenas o usuário autenticado pode ler e modificar seus resultados.
+      match /rankingPontuacoes/{pontuacaoId} {
+        allow get, list: if dono(uid);
+
+        // Ao salvar, o aplicativo cria nome, pontos e data do resultado.
+        allow create: if dono(uid)
+          && request.resource.data.keys().hasOnly(['nome', 'pontos', 'criadoEm'])
+          && request.resource.data.keys().hasAll(['nome', 'pontos', 'criadoEm'])
+          && request.resource.data.nome is string
+          && request.resource.data.nome.size() > 0
+          && request.resource.data.nome.size() <= 80
+          && request.resource.data.pontos is int
+          && request.resource.data.pontos >= 0
+          && request.resource.data.criadoEm is timestamp;
+
+        // A correção muda somente nome e/ou pontos; não modifica a data.
+        allow update: if dono(uid)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nome', 'pontos'])
+          && request.resource.data.nome is string
+          && request.resource.data.nome.size() > 0
+          && request.resource.data.nome.size() <= 80
+          && request.resource.data.pontos is int
+          && request.resource.data.pontos >= 0;
+
+        // Apaga somente a pontuação escolhida, não o ranking inteiro.
+        allow delete: if dono(uid);
+      }
       match /gruposSilenciados/{grupoId} {
         allow read, delete: if dono(uid);
         allow create, update: if dono(uid)
@@ -105,7 +134,8 @@ service cloud.firestore {
     }
 
     match /amizades/{id} {
-      allow read: if logado() && request.auth.uid in resource.data.participantes;
+      allow get: if logado() && (resource == null || request.auth.uid in resource.data.participantes);
+      allow list: if logado() && request.auth.uid in resource.data.participantes;
       allow create: if logado()
         && request.resource.data.keys().hasOnly(['participantes','criadoEm'])
         && request.resource.data.participantes is list
@@ -114,7 +144,13 @@ service cloud.firestore {
         && request.resource.data.participantes[0] != request.resource.data.participantes[1]
         && (id == request.resource.data.participantes[0] + '_' + request.resource.data.participantes[1]
           || id == request.resource.data.participantes[1] + '_' + request.resource.data.participantes[0])
-        && curtiram(request.resource.data.participantes[0], request.resource.data.participantes[1]);
+        && (curtiram(request.resource.data.participantes[0], request.resource.data.participantes[1])
+          || (existsAfter(/databases/$(database)/documents/pedidosAmizade/$(request.resource.data.participantes[0] + '_' + request.resource.data.participantes[1]))
+            && getAfter(/databases/$(database)/documents/pedidosAmizade/$(request.resource.data.participantes[0] + '_' + request.resource.data.participantes[1])).data.status == 'aceito'
+            && request.auth.uid == request.resource.data.participantes[1])
+          || (existsAfter(/databases/$(database)/documents/pedidosAmizade/$(request.resource.data.participantes[1] + '_' + request.resource.data.participantes[0]))
+            && getAfter(/databases/$(database)/documents/pedidosAmizade/$(request.resource.data.participantes[1] + '_' + request.resource.data.participantes[0])).data.status == 'aceito'
+            && request.auth.uid == request.resource.data.participantes[0]));
       allow update, delete: if false;
       match /mensagens/{mensagemId} {
         allow read: if amigos(id);
@@ -126,6 +162,23 @@ service cloud.firestore {
           && request.resource.data.texto.size() <= 1000;
         allow update, delete: if false;
       }
+    }
+
+    match /pedidosAmizade/{id} {
+      allow get, list: if logado() && (resource.data.remetenteId == request.auth.uid ||
+        resource.data.destinatarioId == request.auth.uid);
+      allow create: if logado()
+        && request.resource.data.keys().hasOnly(['remetenteId','destinatarioId','status','criadoEm'])
+        && request.resource.data.remetenteId == request.auth.uid
+        && request.resource.data.destinatarioId != request.auth.uid
+        && request.resource.data.status == 'pendente'
+        && id == request.auth.uid + '_' + request.resource.data.destinatarioId;
+      allow update: if logado()
+        && resource.data.destinatarioId == request.auth.uid
+        && resource.data.status == 'pendente'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        && request.resource.data.status in ['aceito','recusado'];
+      allow delete: if false;
     }
 
     match /convitesGrupos/{id} {
@@ -240,6 +293,34 @@ service cloud.firestore {
           && !(request.auth.uid in resource.data.confirmados)
           && request.auth.uid in request.resource.data.confirmados;
         allow delete: if donoGrupo(id) || (membroGrupo(id) && resource.data.organizadorId == request.auth.uid);
+    }
+
+      match /solicitacoesAmizade/{pedidoId} {
+  // O remetente pode criar um pedido.
+  allow create: if request.auth != null
+    && request.resource.data.keys().hasOnly([
+      'remetenteId',
+      'destinatarioId',
+      'status',
+      'criadoEm'
+    ])
+    && request.resource.data.remetenteId == request.auth.uid
+    && request.resource.data.destinatarioId is string
+    && request.resource.data.destinatarioId != request.auth.uid
+    && request.resource.data.status == 'pendente'
+    && pedidoId == request.auth.uid + '_' +
+       request.resource.data.destinatarioId;
+
+  // Remetente e destinatário podem consultar seus pedidos.
+  allow read: if request.auth != null
+    && (
+      resource.data.remetenteId == request.auth.uid ||
+      resource.data.destinatarioId == request.auth.uid
+    );
+
+  // Alteração de status e exclusão ainda não liberadas.
+  allow update, delete: if false;
+      
       }
     }
   }
